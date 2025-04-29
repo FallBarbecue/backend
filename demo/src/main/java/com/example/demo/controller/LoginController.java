@@ -21,7 +21,7 @@ public class LoginController {
         String email = loginRequest.get("email");
         String password = loginRequest.get("password");
 
-        String token = userService.login(email, password);
+        String token = String.valueOf(userService.login(email, password));
 
         Map<String, String> response = new HashMap<>();
         if (token.equals("Invalid credentials")) {

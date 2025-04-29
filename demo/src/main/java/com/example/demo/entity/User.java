@@ -1,5 +1,6 @@
 package com.example.demo.entity;
 
+import com.example.demo.entity.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,7 +16,7 @@ public class User {
     private String name;
     private String email;
     private String password;
-    private byte[] profilePicture;
+//    private byte[] profilePicture;
 
     @Enumerated(EnumType.STRING)
     private Role role;

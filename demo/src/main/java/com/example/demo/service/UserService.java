@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.entity.User;
+import com.example.demo.entity.Role;
 import com.example.demo.repository.UserRepository;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -21,18 +22,22 @@ public class UserService {
 
 
     public String register(User user) {
+        if (user.getRole() == null) {
+            user.setRole(Role.GUEST);
+        }
+
         user.setPassword(encoder.encode(user.getPassword()));
         userRepository.save(user);
-        return "User registered";
+        return "User registered with role: " + user.getRole();
     }
 
 
-    public String login(String email, String password) {
+    public Optional login(String email, String password) {
         Optional<User> userOpt = userRepository.findByEmail(email);
         if (userOpt.isPresent() && encoder.matches(password, userOpt.get().getPassword())) {
-            return generateToken(email);
+            return userOpt;
         }
-        return "Invalid credentials";
+        return Optional.empty();
     }
 
     private String generateToken(String username) {
@@ -82,7 +87,16 @@ public class UserService {
 
     public void updateProfilePicture(Long userId, byte[] pictureData) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-        user.setProfilePicture(pictureData);
+//        user.setProfilePicture(pictureData);
         userRepository.save(user);
+    }
+    public boolean isAdmin(User user) {
+        return user.getRole() == Role.ADMIN;
+    }
+    public boolean isIntructor(User user) {
+        return user.getRole() == Role.INSTRUCTOR;
+    }
+    public boolean isStudent(User user) {
+        return user.getRole() == Role.STUDENT;
     }
 }
